@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  name String
+  email String @unique
+  messages Message[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  id String @id @map("_id") @default(auto()) @db.ObjectId
+  body String
+  createdAt DateTime @default(now())
+  userId String @map("_userId") @db.ObjectId 
+  user User @relation(fields: [userId], references: [id])
+}
